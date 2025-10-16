@@ -57,14 +57,12 @@ Estas transformaciones aseguran la consistencia del dataset antes de evaluar nul
 ---
 
 ## Eliminación de columnas
+Se comienza el analisis unicamente con estas columnas de listings: 'id', 'name', 'description', 'neighborhood_overview', 'host_id', 'host_since', 'host_location', 'host_about', 'host_response_time', 'host_response_rate', 'host_acceptance_rate', 'host_is_superhost', 'host_identity_verified','neighbourhood_cleansed', 'property_type', 'room_type', 'accommodates', 'bathrooms', 'bathrooms_text', 'bedrooms', 'beds', 'amenities', 'price', 'minimum_nights', 'maximum_nights', 'availability_90', 'number_of_reviews_ltm','review_scores_rating','review_scores_accuracy','review_scores_cleanliness','review_scores_checkin','review_scores_communication','review_scores_location','review_scores_value','instant_bookable'.
 
-Se eliminaron o no se utilizaron las siguientes columnas del dataset original:
+Las demas se pueden considerar eliminadas.
+De calendar se borra 'adjusted_price' .
+Las columnas con >20% de datos faltantes no se imputaron y pueden considerarse eliminadas.
 
-| Columna | % nulos | Motivo |
-|----------|----------|--------|
-| `description` | >60 % | Texto libre no relevante para el análisis cuantitativo. |
-| `host_about` | >50 % | Contenido subjetivo y no estructurado. |
-| `neighborhood_overview` | >40 % | Redundante con `neighbourhood_cleansed`. |
 
 ---
 
