@@ -21,40 +21,45 @@ En caso de trabajar con el dataset completo, se recomienda ubicarlo en la misma 
 
 ---
 
-## Limpieza de datos
+# Limpieza de datos
+Estandarizaciones aplicadas (según cada dataset):
 
-Se realizó una estandarización inicial de tipos y valores:
+- **`calendar`**
+  - `price`: eliminación de símbolos (`$`, `,`) y conversión a `float`.
+  - `available`: mapeo `'t'/'f'` → `True/False`.
+  - `date`: conversión a `datetime`.
+  - Se elimina la columna vacía `adjusted_price`.
 
-- Conversión de campos monetarios (`price`) a **float**, eliminando símbolos “$” y comas.  
-- Conversión de porcentajes (`host_response_rate`, `host_acceptance_rate`) a **float**.  
-- Campos booleanos (`host_is_superhost`, `instant_bookable`, `host_identity_verified`) mapeados a **True/False**.  
-- Fechas (`host_since`) transformadas al tipo **datetime**.  
-- Reemplazo de valores imposibles o incoherentes por `NaN`:  
-  - `price == 0`  
-  - `maximum_nights == 0`  
-  - porcentajes o fechas vacías  
+- **`reviews`**
+  - `date`: conversión a `datetime`.
 
-Estas transformaciones aseguran la consistencia del dataset antes de evaluar nulos, duplicados y outliers.
+- **`listings`**
+  - Se selecciona un subconjunto de columnas relevantes en `df_listings_limpio`.
+  - `host_since`: `datetime`.
+  - `host_response_rate` y `host_acceptance_rate`: conversión de `'85%'` → **proporción** `0.85` (no 0–100).
+  - `host_is_superhost`, `instant_bookable`, `host_identity_verified`: mapeo `'t'/'f'` → `True/False`.  
+    > Tras la limpieza, `instant_bookable` queda como `bool`; en las otras dos puede persistir `object` por presencia de nulos.
+  - `price`: eliminación de símbolos (`$`, `,`) y conversión a `float`.
 
 ---
 
-## Tratamiento de 0s y nulos
+# Tratamiento de 0s y nulos
+- **Valores imposibles**
+  - En `calendar`, **`price <= 0`** se marca como faltante (`NaN`).
 
-- **Reemplazo de valores inválidos:**  
-  Los `0` en `price` y `maximum_nights` fueron tratados como faltantes, ya que representan datos inexistentes y no valores válidos del fenómeno.  
+- **Detección de nulos**
+  - Se reportan conteos y **porcentajes de nulos** por columna (todos los datasets).
+  - Visualización del patrón de faltantes con `missingno`.
 
-- **Detección de nulos:**  
-  Se generó una tabla de porcentaje de faltantes por columna para evaluar su relevancia.  
+- **MAR/MCAR (diagnóstico)**
+  - Se ejecuta el **Little’s MCAR test** (pyampute) en `reviews`, `calendar` y `listings_limpio`; el resultado indica **p≈0** (no MCAR), por lo que se procede con imputación.
 
-- **Eliminación de columnas:**  
-  Aquellas con más del **20 % de valores nulos** fueron descartadas por su bajo aporte analítico y alto costo de imputación.  
+- **Imputación**
+  - Se usa **`KNNImputer(n_neighbors=5)`** para **variables numéricas** en `listings_limpio` y `calendar`, **excluyendo** columnas no numéricas o con >20% nulos.
+  - En `calendar`, tras la imputación se **redondean hacia arriba** `minimum_nights` y `maximum_nights` y se tipan como `Int64`.
 
-- **Imputación de faltantes:**  
-  - Variables numéricas imputadas por **mediana**, para evitar sesgos causados por outliers.  
-  - Variables categóricas imputadas por **moda**, o moda dentro del mismo barrio.  
+> No se aplicó imputación categórica por moda (global o por barrio).
 
-- **Duplicados:**  
-  Se eliminaron registros duplicados según el identificador `id`.
 
 ---
 
@@ -68,57 +73,45 @@ Las columnas con >20% de datos faltantes no se imputaron y pueden considerarse e
 
 ---
 
-## Detección y análisis de outliers
+# Detección y análisis de outliers
+Enfoque aplicado:
 
-- Se utilizó el método **IQR (rango intercuartílico)** para detectar valores extremos en variables numéricas como `price`, `bedrooms` y `accommodates`.  
-- No se eliminaron outliers salvo los imposibles, dado que reflejan casos reales (propiedades de lujo, mayor capacidad, ubicaciones premium).  
-- Se agregaron columnas auxiliares (`_outlier = True/False`) para rastrear observaciones extremas.  
-- En el **análisis multivariado**, los outliers se analizaron según variables explicativas: `room_type`, `accommodates` y `neighbourhood_cleansed`.
+1. **Exploratorio** con transformaciones (Box–Cox con *shift* cuando ≤0) y **z-scores** para cuantificar atipicidad por variable.
+2. **Detección multivariada**:
+   - **Isolation Forest** (`contamination=0.05`)
+   - **Local Outlier Factor** (`n_neighbors=20`, `contamination=0.05`)
+   - Se agregan columnas **`outlier_iso`** y **`outlier_lof`**.
+
+**Decisión adoptada:** se **eliminó** el **5%** de registros de `listings_limpio` marcados por **Isolation Forest** (criterio principal de poda). LOF se usó como contraste, sin eliminar por LOF.
+
+> Nota: aunque se probaron transformaciones y normalidad, las variables se mantienen mayormente no normales; los histogramas se interpretan con ese criterio.
 
 ---
 
-## Contexto de negocio, hipótesis y objetivos
+# Contexto de negocio, hipótesis y objetivos
+El análisis busca comprender **drivers de precio y valoración** de alojamientos en CABA: características del alojamiento, **amenities**, ubicación y desempeño del anfitrión.
 
-El análisis busca comprender los **factores que influyen en el precio y la calificación** de los alojamientos en Buenos Aires.  
-Se pretende identificar relaciones entre características del alojamiento, ubicación y desempeño del anfitrión.
+---
 
-### Hipótesis planteadas
-
-| Nº | Hipótesis | Variables involucradas |
-|----|------------|------------------------|
-| 1 | Los precios en barrios turísticos (Palermo, Recoleta, San Telmo) son sistemáticamente más altos que en barrios periféricos. | `price`, `neighbourhood_cleansed` |
-| 2 | La presencia de amenities clave (wifi, aire acondicionado, cocina equipada) incrementa tanto el precio como la calificación promedio. | `amenities`, `price`, `review_scores_rating` |
-| 3 | A menor tiempo de respuesta del host, mayor probabilidad de recibir una review positiva. | `host_response_time`, `review_scores_rating` |
-| 4 | Existe relación entre el score de limpieza y el de ubicación. | `review_scores_cleanliness`, `review_scores_location` |
+# Hipótesis planteadas
+| Nº | Hipótesis | Variables involucradas | Estado en la notebook |
+|----|-----------|------------------------|-----------------------|
+| 1  | Los precios en barrios turísticos (p.ej. Palermo, Recoleta, San Telmo) son sistemáticamente más altos que en el resto. | `price`, `neighbourhood_cleansed` | **Parcial**: se listan barrios y se grafican distribuciones, pero la definición final de “turístico vs. resto” y el contraste estadístico quedan a completar. |
+| 2  | Amenities claves (p.ej. gym, pool, free parking) incrementan precio y calificación. | `amenities`, `price`, `review_scores_rating` | **Implementada (amenities seleccionadas)**: se crean flags `has_gym`, `has_pool`, `has_free_parking`, combinaciones y comparativas de medias. |
+| 3  | Menor tiempo de respuesta del host → mejores reviews. | `host_response_time`, `review_scores_rating` | **Implementada**: boxplot por categorías de `host_response_time`. |
+| 4  | Existe relación entre score de limpieza y de ubicación. | `review_scores_cleanliness`, `review_scores_location` | **Implementada**: scatter para inspección visual. |
 
 ---
 
 ## Visualizaciones y conclusiones preliminares
 
-**Gráficos realizados para contrastar hipótesis:**
-1. **Distribución de precios (log-scale):**  
-   Muestra asimetría hacia la derecha y outliers explicables por capacidad o ubicación.  
-2. **Precio vs tipo de habitación:**  
-   Boxplot: los *Entire home/apt* tienen medianas de precio mucho mayores que las *Private room*.  
-3. **Precio vs capacidad (`accommodates`):**  
-   Relación positiva clara: mayor capacidad → mayor precio.  
-4. **Precio por barrio:**  
-   Barplot (top-10 barrios): Palermo, Recoleta y Puerto Madero concentran los valores más altos.  
-5. **Calificación vs amenities:**  
-   Los alojamientos con wifi o aire acondicionado tienen mejores calificaciones promedio.  
-6. **Tiempo de respuesta del host vs review positiva:**  
-   Hosts con respuesta rápida obtienen mejores puntuaciones.  
-7. **Cleanliness vs Location:**  
-   Correlación positiva moderada entre ambos indicadores.
-
-**Conclusiones preliminares:**
-- Los **barrios turísticos** presentan precios significativamente más altos (hipótesis 1 confirmada).  
-- Las **amenities clave** influyen positivamente en el precio y la valoración (hipótesis 2 parcialmente confirmada).  
-- Los **superhosts** y anfitriones con **rápida respuesta** reciben mejores reviews.  
-- Se confirma una **correlación moderada entre limpieza y ubicación** (hipótesis 4).  
-- Los **outliers** representan casos reales de alta demanda o lujo y se mantuvieron en el análisis.
-
----
-
-## Estructura del repositorio
-
+**Gráficos y conclusiones preliminares:**
+1. **Distribución de precios:**  
+   Muestra asimetría hacia la derecha y outliers explicables por capacidad o ubicación.
+   Los **barrios turísticos** parecen presentar precios más altos.  
+2. **Precio y review score por combinacion de ammenities:**  
+   Pareceria que la combinacion de los ammenities gym, parking gratis y pileta hace que el promedio del precio de la publicacion y el promedio del review score cambie.  
+3. **El tiempo de respuesta impacta en los reviews que recibe un host:**  
+   El promedio de score que recibe un host pareceria no cambiar segun el tiempo de respuesta.  
+4. **Hay una relación entre el score de reviews de limpieza y el score de reviews de la ubicación:**  
+   Pareceria no haber relacion entre el score de reviews de limpieza y el de ubicacion.  
