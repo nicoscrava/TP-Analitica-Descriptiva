@@ -17,6 +17,8 @@ Allí pueden descargarse los archivos `.csv.gz` correspondientes, que incluyen t
 
 En caso de trabajar con el dataset completo, se recomienda ubicarlo en la misma carpeta `/data/` y actualizar las rutas en el notebook de análisis (`TP_Descriptiva.ipynb`).
 
+**Para correr el codigo descargar los datasets y modificar la ruta del metodo .read_csv() del primer bloque de codigo.**
+
 ---
 
 ## Limpieza de datos
