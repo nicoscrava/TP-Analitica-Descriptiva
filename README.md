@@ -94,12 +94,12 @@ El análisis busca comprender **drivers de precio y valoración** de alojamiento
 ---
 
 # Hipótesis planteadas
-| Nº | Hipótesis | Variables involucradas | Estado en la notebook |
+| Nº | Hipótesis | Variables involucradas | Visualizacion |
 |----|-----------|------------------------|-----------------------|
-| 1  | Los precios en barrios turísticos (p.ej. Palermo, Recoleta, San Telmo) son sistemáticamente más altos que en el resto. | `price`, `neighbourhood_cleansed` | **Parcial**: se listan barrios y se grafican distribuciones, pero la definición final de “turístico vs. resto” y el contraste estadístico quedan a completar. |
-| 2  | Amenities claves (p.ej. gym, pool, free parking) incrementan precio y calificación. | `amenities`, `price`, `review_scores_rating` | **Implementada (amenities seleccionadas)**: se crean flags `has_gym`, `has_pool`, `has_free_parking`, combinaciones y comparativas de medias. |
-| 3  | Menor tiempo de respuesta del host → mejores reviews. | `host_response_time`, `review_scores_rating` | **Implementada**: boxplot por categorías de `host_response_time`. |
-| 4  | Existe relación entre score de limpieza y de ubicación. | `review_scores_cleanliness`, `review_scores_location` | **Implementada**: scatter para inspección visual. |
+| 1  | Los precios en barrios turísticos (p.ej. Palermo, Recoleta, San Telmo) son sistemáticamente más altos que en el resto. | `price`, `neighbourhood_cleansed` | **Parcial**: se clasifican barrios y se grafican distribuciones en histogramas. |
+| 2  | Amenities claves (p.ej. gym, pool, free parking) incrementan precio y calificación. | `amenities`, `price`, `review_scores_rating` | **Implementada (amenities seleccionadas)**: se crean flags `has_gym`, `has_pool`, `has_free_parking`, combinaciones y comparativas de medias en un bar plot. |
+| 3  | Menor tiempo de respuesta del host → mejores reviews. | `host_response_time`, `review_scores_rating` | Boxplot por categorías de `host_response_time`. |
+| 4  | Existe relación entre score de limpieza y de ubicación. | `review_scores_cleanliness`, `review_scores_location` | Scatter para inspección visual. |
 
 ---
 
