@@ -26,7 +26,7 @@ En caso de trabajar con el dataset completo, se recomienda ubicarlo en la misma 
 Se realizó una estandarización inicial de tipos y valores:
 
 - Conversión de campos monetarios (`price`) a **float**, eliminando símbolos “$” y comas.  
-- Conversión de porcentajes (`host_response_rate`, `host_acceptance_rate`) a **enteros** (0–100).  
+- Conversión de porcentajes (`host_response_rate`, `host_acceptance_rate`) a **float**.  
 - Campos booleanos (`host_is_superhost`, `instant_bookable`, `host_identity_verified`) mapeados a **True/False**.  
 - Fechas (`host_since`) transformadas al tipo **datetime**.  
 - Reemplazo de valores imposibles o incoherentes por `NaN`:  
