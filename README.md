@@ -112,4 +112,55 @@ El análisis busca comprender **drivers de precio y valoración** de alojamiento
 3. **El tiempo de respuesta impacta en los reviews que recibe un host:**  
    El promedio de score que recibe un host pareceria no cambiar segun el tiempo de respuesta.  
 4. **Hay una relación entre el score de reviews de limpieza y el score de reviews de la ubicación:**  
-   Pareceria no haber relacion entre el score de reviews de limpieza y el de ubicacion.  
+   Pareceria no haber relacion entre el score de reviews de limpieza y el de ubicacion.
+
+---
+
+## Resultados de contraste estadístico
+
+Los tests estadísticos confirmaron o refutaron las hipótesis planteadas:
+
+1. **Precio por barrio turístico (Hipótesis 1):**  
+   El test de **Kruskal–Wallis** mostró diferencias **estadísticamente significativas (p < 0.05)** entre barrios turísticos y no turísticos.  
+   → Se confirma que los barrios turísticos presentan precios más altos en promedio.  
+
+2. **Amenidades clave (Hipótesis 2):**  
+   El **Kruskal–Wallis** evidenció diferencias significativas tanto en **precio** como en **review score**, aunque no lineales.  
+   → El *free parking* y la presencia de múltiples amenidades elevan el score, pero su impacto en el precio no es uniforme.  
+
+3. **Tiempo de respuesta del host (Hipótesis 3):**  
+   No se detectaron diferencias significativas entre grupos de `host_response_time`.  
+   → No se confirma una relación directa entre el tiempo de respuesta y la puntuación promedio recibida.  
+
+4. **Relación limpieza–ubicación (Hipótesis 4):**  
+   El test de **correlación de Spearman** arrojó un coeficiente moderado positivo (**ρ ≈ 0.35**, p < 0.001).  
+   → Existe relación estadísticamente significativa entre ambas variables, aunque no fuerte.
+
+---
+
+# Preprocesamiento para Machine Learning
+
+Se realizó una preparación del dataset orientada al modelado predictivo.
+
+## Variables categóricas
+- **One Hot Encoding:** aplicado sobre `comuna` y `room_type` para generar variables binarias representativas.  
+- **Ordinal Encoding:** usado en `host_response_time` con un orden lógico (de respuesta más rápida a más lenta).  
+- Se eliminaron columnas no relevantes o redundantes (`description`, `host_about`, `amenities`, entre otras).
+
+## Variables numéricas
+- **Conversión temporal:**  
+  `host_since` se transformó en una variable numérica de **antigüedad (años)** del anfitrión.  
+- **Escalado:**  
+  Se aplicaron dos estrategias:  
+  - `MinMaxScaler` → escala 0–1 (útil para modelos sensibles a rangos).  
+  - `StandardScaler` → media 0, desviación 1 (adecuado para modelos lineales).  
+
+---
+
+# Revisión de multicolinealidad
+
+- Se evaluaron correlaciones entre variables numéricas con **matrices de calor** para `MinMaxScaler` y `StandardScaler`.  
+- Se calculó el **Variance Inflation Factor (VIF)** para ambas versiones del dataset:  
+  - En **StandardScaler**, todas las variables presentaron **VIF < 5**, sin evidencia de multicolinealidad severa.  
+  - En **MinMaxScaler**, algunas variables con **VIF > 10** fueron eliminadas iterativamente (`review_scores_rating`, `host_response_rate`, etc.) hasta lograr independencia entre predictores.
+
