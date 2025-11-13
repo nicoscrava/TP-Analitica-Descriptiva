@@ -1,5 +1,7 @@
 # TP-Analitica-Descriptiva
 
+Link al tablero: https://app.powerbi.com/links/Wwx7QHUGZ4?ctid=a1f50a97-21c0-49a7-a9d4-f244ebb42da7&pbi_source=linkShare
+
 ## Estructura y adquisición de los datos
 
 El proyecto utiliza información proveniente de la plataforma **Inside Airbnb**, específicamente de la sección correspondiente a la ciudad de **Buenos Aires**.
