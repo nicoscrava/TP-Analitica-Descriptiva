@@ -193,6 +193,81 @@ Se realizó una preparación del dataset orientada al modelado predictivo.
 
 ---
 
+## Resultados del modelo predictivo y conclusiones del análisis
+
+Como parte del análisis avanzado, se desarrollaron dos modelos de regresión con el objetivo de estimar el precio de los alojamientos de Airbnb en Buenos Aires:
+
+- **Regresión Lineal**
+- **Random Forest Regressor**
+
+El objetivo no fue construir un modelo altamente preciso, sino **evaluar la predictibilidad del precio** y **entender qué variables explican mejor sus diferencias**.
+
+### 🔹 Desempeño predictivo
+Los resultados muestran que el precio presenta un nivel de complejidad que estos modelos baseline no logran capturar adecuadamente:
+
+| Modelo               | R²     | MAE     | RMSE       |
+|---------------------|---------|----------|-------------|
+| Regresión Lineal    | ~0.00   | Muy alto | Muy alto    |
+| Random Forest       | ~0.10   | Alto     | Alto        |
+
+- La **Regresión Lineal** prácticamente no explica la variabilidad del precio.
+- El **Random Forest** mejora el ajuste, pero aun así solo explica alrededor del **10%** del comportamiento real del mercado.
+
+Esto refleja que el precio depende de factores no presentes en el dataset (fotos, texto del anuncio, ubicación exacta, estacionalidad, competencia, etc.) o que su relación con las variables es altamente no lineal.
+
+### 🔹 Variables más influyentes
+A pesar del bajo poder predictivo, el análisis permite identificar qué factores del dataset son más relevantes:
+
+#### **Según Regresión Lineal:**
+- Ubicación (comunas 7, 8, 9, 10)
+- Tipo de habitación
+- Puntuaciones de ubicación
+- Indicadores del host (superhost, verificación)
+- Instant booking
+
+#### **Según Random Forest:**
+- **minimum_nights**
+- **host_acceptance_rate**
+- **antigüedad** del anuncio
+- **host_response_rate**
+- Puntuaciones de reviews (ubicación, accuracy, comunicación)
+- Variables físicas como **bathrooms** y **accommodates**
+- Algunas comunas específicas (ej.: Comuna 14)
+
+En conjunto, ambos modelos muestran que el precio depende de una combinación de:
+
+1. **Ubicación**
+  - La influencia de ubicacion en el precio puede deberse a factores como lo son la seguridad. Esta nota expande sobre cuales son las comunas mas y menos seguras de la ciudad y se pueden ver algunas relaciones que coinciden con los features mas importantes segun el modelo: https://www.cronista.com/informacion-gral/el-barrio-mas-seguro-de-buenos-aires-segun-un-informe-oficial/
+3. **Calidad percibida por el huésped (reviews)**  
+4. **Tipo y características físicas del alojamiento**  
+5. **Comportamiento del host**  
+
+### 🔹 Conclusiones del análisis
+- Los modelos simples no logran capturar completamente la dinámica del mercado.  
+- Aun así, revelan patrones importantes sobre cómo se forma el precio.  
+- La relación entre variables y precio es **no lineal**, heterogénea y depende de múltiples dimensiones.  
+- Para mejorar el desempeño se requerirían variables más ricas (texto, imágenes, coordenadas precisas) y modelos más avanzados (Gradient Boosting, XGBoost, CatBoost, embeddings, etc.).
+
+### 🔹 Recomendaciones de negocio
+A partir de las variables más influyentes, un host podría:
+
+- **Optimizar la percepción del anuncio**, mejorando puntuaciones como `accuracy`, `communication` y `location`.  
+- **Reducir el tiempo de respuesta**, ya que mayor `host_response_rate` se asocia a mejores precios y mayor demanda.  
+- **Ajustar política de estadía mínima**, especialmente en zonas donde listings con `minimum_nights` altos fijan precios mayores.  
+- **Fortalecer la reputación del host** (verificación, aceptación rápida, convertirse en superhost).  
+- **Invertir en amenities clave**, especialmente aquellos que impactan directamente en la valoración del huésped.
+
+### 🔹 Síntesis
+Aunque el poder predictivo de los modelos básicos es limitado, el análisis proporciona insights valiosos para comprender:
+
+- qué impulsa los precios,
+- cómo difieren los alojamientos entre sí,
+- y qué aspectos deberían priorizarse para mejorar ingresos.
+
+Estos resultados alimentan tanto la narrativa de negocio de la presentación como las recomendaciones finales del proyecto.
+
+---
+
 ## Limitaciones del estudio
   - Solo se analiza la oferta activa al momento del scrapeo (enero 2025), por lo que cambios posteriores no están reflejados.
 
