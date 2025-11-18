@@ -202,7 +202,7 @@ Como parte del análisis avanzado, se desarrollaron dos modelos de regresión co
 
 El objetivo no fue construir un modelo altamente preciso, sino **evaluar la predictibilidad del precio** y **entender qué variables explican mejor sus diferencias**.
 
-### 🔹 Desempeño predictivo
+### Desempeño predictivo
 Los resultados muestran que el precio presenta un nivel de complejidad que estos modelos baseline no logran capturar adecuadamente:
 
 | Modelo               | R²     | MAE     | RMSE       |
