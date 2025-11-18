@@ -215,7 +215,7 @@ Los resultados muestran que el precio presenta un nivel de complejidad que estos
 
 Esto refleja que el precio depende de factores no presentes en el dataset (fotos, texto del anuncio, ubicación exacta, estacionalidad, competencia, etc.) o que su relación con las variables es altamente no lineal.
 
-### 🔹 Variables más influyentes
+### Variables más influyentes
 A pesar del bajo poder predictivo, el análisis permite identificar qué factores del dataset son más relevantes:
 
 #### **Según Regresión Lineal:**
@@ -242,13 +242,13 @@ En conjunto, ambos modelos muestran que el precio depende de una combinación de
 4. **Tipo y características físicas del alojamiento**  
 5. **Comportamiento del host**  
 
-### 🔹 Conclusiones del análisis
+### Conclusiones del análisis
 - Los modelos simples no logran capturar completamente la dinámica del mercado.  
 - Aun así, revelan patrones importantes sobre cómo se forma el precio.  
 - La relación entre variables y precio es **no lineal**, heterogénea y depende de múltiples dimensiones.  
 - Para mejorar el desempeño se requerirían variables más ricas (texto, imágenes, coordenadas precisas) y modelos más avanzados (Gradient Boosting, XGBoost, CatBoost, embeddings, etc.).
 
-### 🔹 Recomendaciones de negocio
+### Recomendaciones de negocio
 A partir de las variables más influyentes, un host podría:
 
 - **Optimizar la percepción del anuncio**, mejorando puntuaciones como `accuracy`, `communication` y `location`.  
@@ -257,7 +257,7 @@ A partir de las variables más influyentes, un host podría:
 - **Fortalecer la reputación del host** (verificación, aceptación rápida, convertirse en superhost).  
 - **Invertir en amenities clave**, especialmente aquellos que impactan directamente en la valoración del huésped.
 
-### 🔹 Síntesis
+### Síntesis
 Aunque el poder predictivo de los modelos básicos es limitado, el análisis proporciona insights valiosos para comprender:
 
 - qué impulsa los precios,
