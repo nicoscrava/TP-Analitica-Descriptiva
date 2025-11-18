@@ -1,6 +1,31 @@
 # TP-Analitica-Descriptiva
 
-Link al tablero: https://app.powerbi.com/links/Wwx7QHUGZ4?ctid=a1f50a97-21c0-49a7-a9d4-f244ebb42da7&pbi_source=linkShare
+## Contexto de negocio
+La industria de alquileres temporarios en Buenos Aires es altamente competitiva y está dominada por plataformas como **Airbnb**, donde miles de hosts buscan maximizar ingresos en un mercado con una gran heterogeneidad de precios, ubicaciones y amenities.
+En este entorno, entender qué factores influyen en el valor publicado, la ocupación y la experiencia del huésped resulta fundamental para diseñar **estrategias de diferenciación**, optimizar precios y mejorar la rentabilidad de los alojamientos.
+
+## Problema que se busca resolver
+El proyecto busca identificar qué variables explican y predicen mejor el precio de un alojamiento de Airbnb en Buenos Aires durante 2025.
+En un mercado donde propiedades similares pueden tener valores muy distintos, los hosts necesitan información accionable para responder a preguntas como:
+  - ¿Qué amenities justifican un precio más alto?
+  - ¿Cuánto pesa realmente la ubicación?
+  - ¿Qué factores generan mayor valor percibido para el huésped?
+
+## Resumen ejecutivo del proyecto
+Este análisis combina información estructural de los listings, datos temporales del calendario y métricas asociadas a reviews para responder qué determina el precio de un alojamiento y cómo debería optimizarse una publicación.
+El trabajo incluye:
+  - Exploración detallada de variables clave (precio, ubicación, capacidad, amenities).
+  - Identificación de patrones espaciales y temporales dentro de la oferta local.
+  - Evaluación del impacto de características físicas, de servicio y del host en el valor del alojamiento.
+  - Desarrollo de un **modelo de regresión** para estimar precios y cuantificar la importancia relativa de cada feature.
+
+Los resultados permiten al host obtener una visión clara sobre qué atributos influyen más en el rendimiento económico de su propiedad y qué acciones podría tomar para mejorar su competitividad dentro de Airbnb Buenos Aires.
+
+## Variable objetivo
+La variable objetivo del proyecto es el **precio del alojamiento**.
+El análisis y el modelado se enfocan en predecir el valor del listing utilizando características estructurales, geográficas, operativas y relacionadas con la experiencia del huésped.
+
+---
 
 ## Estructura y adquisición de los datos
 
@@ -166,3 +191,26 @@ Se realizó una preparación del dataset orientada al modelado predictivo.
   - En **StandardScaler**, todas las variables presentaron **VIF < 5**, sin evidencia de multicolinealidad severa.  
   - En **MinMaxScaler**, algunas variables con **VIF > 10** fueron eliminadas iterativamente (`review_scores_rating`, `host_response_rate`, etc.) hasta lograr independencia entre predictores.
 
+---
+
+## Limitaciones del estudio
+  - Solo se analiza la oferta activa al momento del scrapeo (enero 2025), por lo que cambios posteriores no están reflejados.
+
+  - El dataset incluye solo publicaciones de Airbnb, excluyendo hoteles u otras plataformas de alquiler temporario.
+
+  - Algunos barrios pueden presentar subregistro, generando sesgos hacia zonas turísticas o con mayor densidad de publicaciones.
+
+  - La información de huéspedes es parcial y no siempre permite inferir motivaciones ni tipo de viaje.
+
+  - El precio diario puede variar por factores externos (demanda, feriados, eventos) que no siempre están explícitos en los datos.
+
+## Líneas futuras de trabajo
+  - Incorporar datos de oferta multifuente (hoteles, Booking, VRBO) para un análisis más representativo del mercado de alquileres temporarios.
+
+  - Explorar modelos más complejos (Gradient Boosting, XGBoost) para mejorar la precisión en la predicción de precios.
+
+  - Integrar información externa como clima, eventos o estacionalidad turística para mejorar el diagnóstico temporal.
+
+  - Desarrollar un sistema de pricing dinámico que actualice predicciones en función de la demanda real del mercado.
+
+  - Automatizar la recolección y actualización periódica de datos mediante pipelines en la nube.
