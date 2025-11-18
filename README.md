@@ -214,3 +214,61 @@ Se realizó una preparación del dataset orientada al modelado predictivo.
   - Desarrollar un sistema de pricing dinámico que actualice predicciones en función de la demanda real del mercado.
 
   - Automatizar la recolección y actualización periódica de datos mediante pipelines en la nube.
+
+---
+
+## Reflexión sobre cómo llevar el proyecto a producción
+
+Si este análisis se integrara en un entorno real, sería necesario definir un flujo de despliegue que permita automatizar la actualización de datos, mantener el modelo vigente y garantizar que las predicciones sean útiles para los usuarios finales (hosts, operadores u otras áreas del negocio).
+
+### 1. Tipo de despliegue
+
+Existen distintas alternativas según el caso de uso:
+
+- **Predicciones en tiempo real (API REST):**  
+  Adecuado si el objetivo es integrar el modelo en una aplicación o plataforma que calcula precios dinámicos en el momento en que el usuario interactúa con la interfaz.
+
+- **Despliegue batch diario o semanal:**  
+  Suficiente si el análisis se usa para actualizar dashboards internos o generar reportes periódicos, sin necesidad de respuestas instantáneas.
+
+- **Integración en sistemas existentes:**  
+  El modelo podría embebirse en una herramienta de pricing, un backoffice de gestión de propiedades o una app interna utilizada por operadores.
+
+### 2. Actualización del modelo y del tablero
+
+Para que el modelo siga siendo representativo:
+
+- **Datos nuevos:** deberían incorporarse con una frecuencia acorde a la dinámica del mercado (diaria, semanal o mensual).
+- **Automatización:** puede implementarse mediante herramientas de orquestación como **Airflow**, **Prefect** o tareas programadas con **cron**, que ejecuten el pipeline completo:
+  - recolección de datos,  
+  - limpieza y preprocesamiento,  
+  - actualización del modelo (si corresponde),  
+  - actualización del dashboard.
+
+### 3. Infraestructura recomendada
+
+Distintas configuraciones posibles:
+
+- **Serverless (AWS Lambda, Google Cloud Functions):** ideal para un uso esporádico, económico y sin necesidad de gestionar servidores.
+- **Contenedores (Docker + Kubernetes):** útil cuando se requiere escalabilidad, despliegue consistente y mantenimiento continuo.
+- **Instancia cloud dedicada o servicio administrado:** alternativa simple para proyectos pequeños que necesitan estabilidad sin configuraciones complejas.
+- **Base de datos para predicciones o logs:** puede ser necesario almacenar
+  - resultados históricos del modelo,
+  - métricas de performance,
+  - registros para auditoría.
+
+### 4. Mantenimiento y monitoreo
+
+Todo modelo en producción necesita seguimiento:
+
+- **Responsables:** un equipo de data science / data engineering debería revisar periódicamente el comportamiento del sistema.
+- **Señales de reentrenamiento:**  
+  - caída en la precisión del modelo,  
+  - cambios bruscos en los patrones de precios,  
+  - aparición de nuevas tendencias o amenities relevantes.
+- **Qué monitorear:**  
+  - **Drift de datos:** si la distribución real se aleja de la usada para entrenar.  
+  - **Performance:** RMSE, MAE y estabilidad de predicciones.  
+  - **Disponibilidad del servicio:** errores, latencia, fallas de ingesta.
+
+En conjunto, estas consideraciones permiten evaluar la viabilidad de llevar el modelo a un entorno productivo real, manteniendo un ciclo continuo de actualización, monitoreo y mejora.
