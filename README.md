@@ -298,16 +298,10 @@ Si este análisis se integrara en un entorno real, sería necesario definir un f
 
 ### 1. Tipo de despliegue
 
-Existen distintas alternativas según el caso de uso:
-
-- **Predicciones en tiempo real (API REST):**  
-  Adecuado si el objetivo es integrar el modelo en una aplicación o plataforma que calcula precios dinámicos en el momento en que el usuario interactúa con la interfaz.
+Lo ideal para este caso sería utilizar:
 
 - **Despliegue batch diario o semanal:**  
-  Suficiente si el análisis se usa para actualizar dashboards internos o generar reportes periódicos, sin necesidad de respuestas instantáneas.
-
-- **Integración en sistemas existentes:**  
-  El modelo podría embebirse en una herramienta de pricing, un backoffice de gestión de propiedades o una app interna utilizada por operadores.
+  No se necesita la información en tiempo real.
 
 ### 2. Actualización del modelo y del tablero
 
@@ -320,17 +314,11 @@ Para que el modelo siga siendo representativo:
   - actualización del modelo (si corresponde),  
   - actualización del dashboard.
 
-### 3. Infraestructura recomendada
+### 3. Infraestructura
 
-Distintas configuraciones posibles:
+La configuración perfecta debería ser:
 
 - **Serverless (AWS Lambda, Google Cloud Functions):** ideal para un uso esporádico, económico y sin necesidad de gestionar servidores.
-- **Contenedores (Docker + Kubernetes):** útil cuando se requiere escalabilidad, despliegue consistente y mantenimiento continuo.
-- **Instancia cloud dedicada o servicio administrado:** alternativa simple para proyectos pequeños que necesitan estabilidad sin configuraciones complejas.
-- **Base de datos para predicciones o logs:** puede ser necesario almacenar
-  - resultados históricos del modelo,
-  - métricas de performance,
-  - registros para auditoría.
 
 ### 4. Mantenimiento y monitoreo
 
